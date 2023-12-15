@@ -1,0 +1,270 @@
+default:
+  seed: 0
+  wrapper:
+    pipeline:
+      [
+        "DSA",
+        "VirtualClutch",
+        "ActionNoise",
+        "DiscreteAction",
+        "TimeLimit",
+        "FSM",
+        "OBS",
+      ]
+    DSA:
+      {
+        zoom_box_obj: psm1,
+        encode_type: general_simple2,
+        cv_interpolate: area,
+        zoom_box_fix_length_ratio: 0.5,
+        encoding_id_needle: 60,
+        encoding_id_psm1: 130,
+        encoding_id_zoom_box: 30,
+        zoom_movement_type: continuous,
+      }
+    VirtualClutch: { start: 6 }
+    ActionNoise: { noise_scale: 0.0 }
+    DiscreteAction: { action_scale: 0.2 }
+    TimeLimit: { max_timestep: 200 }
+    FSM: { arg: 0 }
+    OBS:
+      {
+        image_obs_key: ["dsa"],
+        vector_obs_key: ["gripper_state", "fsm_state", "robot_prio"],
+        direct_map_key: ["fsm_state"],
+        direct_render_key: ["rgb", "depth"],
+        is_vector2image: true,
+        image_resize: [64, 64],
+      }
+    ImageNoise: { "None": "None" }
+  task_name: needle_pick
+  embodied_name: SurrolEnv
+  embodied:
+    SurrolEnv:
+      pybullet_gui: false
+      cam_width: 600
+      cam_height: 600
+      mask_background_id: -3
+      depth_remap_range: 0.2
+      depth_remap_range_noise: 0.0
+      depth_remap_center_noise: 0.0
+      cam_target_noise: 0.0
+      cam_distance_noise: 0.0
+      cam_yaw_noise: 0.0
+      cam_pitch_noise: 0.0
+      cam_roll_noise: 0.0
+      cam_up_axis_noise: 0.0
+      background_texture_dir: ""
+      cam_mode: "rgbdm"
+      cam_num: 1
+      realistic_depth: False
+      needle_pick:
+        fix_goal: true
+        noise_scale: 1.0
+        reward_done_success: 1
+        reward_done_fail: -0.1
+        reward_in_progress: -0.001
+        reward_progress_fail: -0.01
+        done_z_thres: 0.1
+        init_pose_ratio_low_gripper: [-0.5, -0.5, -0.5, -0.9]
+        init_pose_ratio_high_gripper: [0.5, 0.5, 0.5, 0.9]
+        init_pose_ratio_low_needle: [-0.5, -0.5, 0.1, -0.99]
+        init_pose_ratio_high_needle: [0.5, 0.5, 0.5, 0.99]
+        random_obj_vis: true
+      gauze_retrieve:
+        fix_goal: true
+        noise_scale: 1.0
+        reward_done_success: 1
+        reward_done_fail: -0.1
+        reward_in_progress: -0.001
+        reward_progress_fail: -0.01
+        done_z_thres: 0.1
+        init_pose_ratio_low_gripper: [-0.5, -0.5, -0.5, -0.9]
+        init_pose_ratio_high_gripper: [0.5, 0.5, 0.5, 0.9]
+        init_pose_ratio_low_stuff: [-0.5, -0.5, 0.1, -0.99]
+        init_pose_ratio_high_stuff: [0.5, 0.5, 0.5, 0.99]
+        random_obj_vis: false
+      peg_transfer:
+        fix_goal: true
+        noise_scale: 1.0
+        reward_done_success: 1
+        reward_done_fail: -0.1
+        reward_in_progress: -0.001
+        reward_progress_fail: -0.01
+        done_z_thres: 0.1
+        init_pose_ratio_low_gripper: [-0.5, -0.5, -0.5, -0.9]
+        init_pose_ratio_high_gripper: [0.5, 0.5, 0.5, 0.9]
+        init_pose_ratio_low_stuff: [-0.5, -0.5, 0.1, -0.99]
+        init_pose_ratio_high_stuff: [0.5, 0.5, 0.5, 0.99]
+        random_obj_vis: false
+    dVRKEnv:
+      needle_pick:
+        arm_names: ["PSM1"]
+        rgbd_device: "rs435"
+        oracle_device: "ds4"
+        ws_x: [-0.1, 0.1]
+        ws_y: [-0.1, 0.1]
+        ws_z: [-0.24, 0.0]
+        psm_reset_q: [0.0, 0.0, 0.12, 0.0, 0.0, 0.0]
+        psm_open_gripper_deg: 40.0
+        psm_init_gripper_quat: [7.07106781e-01, 7.07106781e-01, 0.0, 0.0]
+        psm_init_pose_low_gripper: [-0.5, -0.5, -0.5, -0.9]
+        psm_init_pose_high_gripper: [0.5, 0.5, 0.5, 0.9]
+        psm_max_step_pos: 0.01
+        psm_max_step_rot: 20.0
+        cam_image_height: 600
+        cam_image_width: 600
+        cam_depth_remap_center: -1.0
+        cam_depth_remap_range: -1.0
+        dvrk_cal_file: ""
+        cam_segment_tool: ""
+        cam_segment_model_dir: ""
+
+#### dvrk ###
+
+dvrk_sim:
+  embodied_name: dVRKEnv
+
+dvrk_real:
+  embodied_name: dVRKEnv
+  embodied.dVRKEnv.needle_pick.dvrk_cal_file: "./data/dvrk_cal/dvrk_cal.yaml"
+dvrk_real_dsa:
+  embodied_name: dVRKEnv
+  embodied.dVRKEnv.needle_pick.dvrk_cal_file: "./data/dvrk_cal/dvrk_cal.yaml"
+  embodied.dVRKEnv.needle_pick.cam_segment_tool: "detectron"
+  embodied.dVRKEnv.needle_pick.cam_segment_model_dir: "./data/segment_model/2023_10_25-14_00_39"
+############## task ###############
+needle_pick:
+  task_name: needle_pick
+gauze_retrieve:
+  task_name: gauze_retrieve
+peg_transfer:
+  task_name: peg_transfer
+
+realistic_depth:
+  embodied.SurrolEnv.realistic_depth: True
+
+############# cam mode #################
+cam_rgbm:
+  embodied.SurrolEnv.cam_mode: "rgbm"
+  wrapper.OBS.direct_render_key: ["rgb"]
+
+############# cam mode #################
+cam_rgbm_dual:
+  embodied.SurrolEnv.cam_mode: "rgbm"
+  wrapper.OBS.direct_render_key: ["rgb"]
+  embodied.SurrolEnv.cam_num: 2
+
+############## large texture ########
+large_texture:
+  embodied.SurrolEnv.background_texture_dir: "./data/surgical_image/"
+############### noise ############################
+# cam pose noise
+cam_pose_noise_low:
+  embodied.SurrolEnv:
+    {
+      cam_target_noise: 5e-3,
+      cam_distance_noise: 5e-2,
+      cam_pitch_noise: 6e0,
+      cam_roll_noise: 11e0,
+      cam_up_axis_noise: 10e0,
+    }
+cam_pose_noise_medium:
+  embodied.SurrolEnv:
+    {
+      cam_target_noise: 10e-3,
+      cam_distance_noise: 10e-2,
+      cam_pitch_noise: 12e0,
+      cam_roll_noise: 22e0,
+      cam_up_axis_noise: 22e0,
+    }
+cam_pose_noise_high:
+  embodied.SurrolEnv:
+    {
+      cam_target_noise: 20e-3,
+      cam_distance_noise: 20e-2,
+      cam_pitch_noise: 25e0,
+      cam_roll_noise: 45e0,
+      cam_up_axis_noise: 45e0,
+    }
+cam_pose_noise_debug:
+  embodied.SurrolEnv:
+    {
+      cam_target_noise: 0e-3,
+      cam_distance_noise: 20e-2,
+      cam_pitch_noise: 0e0,
+      cam_roll_noise: 0e0,
+      cam_up_axis_noise: 0e0,
+    }
+
+# depth remap noise
+depth_remap_noise_low:
+  embodied.SurrolEnv:
+    { depth_remap_range_noise: 1e-2, depth_remap_center_noise: 1e-2 }
+depth_remap_noise_medium:
+  embodied.SurrolEnv:
+    { depth_remap_range_noise: 2e-2, depth_remap_center_noise: 2e-2 }
+depth_remap_noise_high:
+  embodied.SurrolEnv:
+    { depth_remap_range_noise: 5e-3, depth_remap_center_noise: 3e-2 }
+
+# action noise
+action_noise_low:
+  wrapper.ActionNoise.noise_scale: 0.07
+action_noise_medium:
+  wrapper.ActionNoise.noise_scale: 0.15
+action_noise_high:
+  wrapper.ActionNoise.noise_scale: 0.3
+
+################## observation ############################
+# vector observation
+vec_obs:
+  wrapper:
+    OBS:
+      {
+        image_obs_key: ["dsa"],
+        vector_obs_key: ["gripper_state", "fsm_state", "robot_prio"],
+        direct_map_key: ["fsm_state"],
+        is_vector2image: False,
+        image_resize: [64, 64],
+      }
+vec_obs2:
+  wrapper:
+    OBS:
+      {
+        image_obs_key: ["dsa"],
+        vector_obs_key: ["gripper_state", "fsm_state"],
+        direct_map_key: ["fsm_state"],
+        is_vector2image: False,
+        image_resize: [64, 64],
+      }
+
+# image representation
+dsa_general1:
+  wrapper.DSA.encode_type: general_simple
+dsa_general2:
+  wrapper.DSA.encode_type: general_simple2
+dsa_iros2023:
+  wrapper.DSA.encode_type: IROS2023
+  wrapper.DSA.zoom_box_obj: needle
+dsa_discrete:
+  wrapper.DSA.zoom_movement_type: discrete
+
+############### others ##############################################
+timelimit_debug:
+  wrapper.TimeLimit: { max_timestep: 1 }
+timelimit_high:
+  wrapper.TimeLimit: { max_timestep: 500 }
+
+gui:
+  embodied.SurrolEnv.pybullet_gui: true
+
+no_resize:
+  wrapper.OBS.image_resize: [-1, -1]
+
+no_wrapper:
+  wrapper.pipeline: [none]
+
+segment:
+  wrapper.pipeline: ["ImageNoise", "DiscreteAction"]
+  embodied.SurrolEnv.background_texture_dir: "./data/surgical_image/"
