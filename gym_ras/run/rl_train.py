@@ -85,6 +85,7 @@ if args.visualize:
     env = Visualizer(env)
     
 if baseline_config.baseline_name == "dreamerv2":
+    obs = env.reset()
     import pdb; pdb.set_trace()
     from gym_ras.rl import train_dreamerv2
     train_dreamerv2.train(env, baseline_config, )

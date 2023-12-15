@@ -61,7 +61,7 @@ class VesselEnv():
         #     return False
         
         terminate_coef=(box_area-area)/box_area
-        if max(width,height) >250 and min(width,height)>(np.mean(self.estimated_diameter)-10) and terminate_coef<0.03:
+        if max(width,height) >250 and min(width,height)>(np.mean(self.estimated_diameter)-10) and terminate_coef<0.1:
             return True
         else:
             return False
