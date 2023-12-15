@@ -15,13 +15,9 @@ print("obs:", obs)
 
 done = False
 while not done:
-    # action = np.random.randint(7)
-    # print(obs, reward, done, info)
-    # img = env.render(mode="rgb_array")
     while True:
         img = env.image
-        img = cv2.resize(img, 
-                            (640, 640))
+        img = cv2.resize(img, (640, 640))
         cv2.imshow("vessel", img)
         k = cv2.waitKey(0)
         cv2.setWindowTitle(

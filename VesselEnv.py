@@ -22,7 +22,7 @@ class VesselEnv():
         self.area_window=deque(maxlen=num_channels+1)
         
         self.z_size=[0,2*math.pi]
-        self.actions=((0,0,0), (50, 0, 0), (-50, 0, 0), (0, 50, 0), (0, -50, 0), (0, 0, math.pi/90), (0, 0, -math.pi/90))
+        self.actions=((0,0,0), (50, 0, 0), (-50, 0, 0), (0, 50, 0), (0, -50, 0), (0, 0, math.pi/18), (0, 0, -math.pi/18))
         # self.observation_space={'spaces':[1]}
 
         self.num_actions=len(self.actions)
@@ -69,7 +69,6 @@ class VesselEnv():
     def step(self,action_int):
         action=self.actions[action_int]
         
-        pdb.set_trace()
         new_pos=np.array([int(self.pos[0]+action[0]*np.cos(self.pos[2])-action[1]*np.sin(self.pos[2])),int(self.pos[1]+action[0]*np.sin(self.pos[2])+action[1]*np.cos(self.pos[2])),self.pos[2]+action[2]])
         
         if self.vessels[self.cur_env].check_mask(new_pos[0:2],new_pos[2]) and self.vessels[self.cur_env].vessel_existance(new_pos[0:2],new_pos[2]):

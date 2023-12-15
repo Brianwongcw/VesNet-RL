@@ -1,0 +1,10 @@
+
+**/__pycache__/
+
+./data
+
+./log
+dreamer_fd.egg-info/
+
+*.pdf
+
