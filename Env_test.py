@@ -27,32 +27,32 @@ while not done:
             break
         elif k & 0xFF == ord('a'):
             action = 1
-            obs, done = env.step(action)
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break           
         elif k & 0xFF == ord('d'):
             action = 2
-            obs, done = env.step(action)
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break
         elif k & 0xFF == ord('w'):
             action = 3
-            obs, done = env.step(action)
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break
         elif k & 0xFF == ord('s'):
             action = 4
-            obs, done = env.step(action)            
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break
         elif k & 0xFF == ord('n'):
             action = 5
-            obs, done = env.step(action)
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break
         elif k & 0xFF == ord('c'):
             action = 6
-            obs, done = env.step(action)
+            obs,_ , done, _ = env.step(action)
             print(action, env.actions[action], done)
             break
         else:
